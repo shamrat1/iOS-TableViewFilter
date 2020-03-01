@@ -15,6 +15,8 @@ enum selectedScope: Int {
 }
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
+    
+    // MARK:- Data and Outlets
 //    let data = [["Someone"], "Anyone" , "Lucky One" , "A few lucky one", "Okay Everyone"]
     let data = [
         ["Habib","missing"],
@@ -25,12 +27,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     ]
     var dataForPlay: [[String]] = []
     @IBOutlet weak var tableView: UITableView!
+    
+    // MARK:- Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         dataForPlay = data
         setupSearchBar()
     }
+    
+    // MARK:- Searchbar Delegates
+    
+    // for setting up searchbar in table view
     func setupSearchBar(){
         let searchBar = UISearchBar(frame: CGRect(x: 0, y: 0, width:(UIScreen.main.bounds.width), height: 70))
         searchBar.showsScopeBar = true
@@ -39,8 +47,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         tableView.tableHeaderView = searchBar
         tableView.tableHeaderView?.backgroundColor = .white
-        
     }
+    
+    // searchbar text input notifier
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.isEmpty {
             dataForPlay = data
@@ -50,6 +59,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
     }
     
+    // searchbar scope change notifier
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
         if selectedScope == 0 {
             dataForPlay = data
@@ -58,12 +68,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             filterTableView(index: selectedScope)
         }
     }
+    
+    // custom method to return filter result
     func filterTableView(index: Int, text: String = ""){
         switch index {
         case selectedScope.all.rawValue:
             dataForPlay = data.filter{ (dataArray:[String]) -> Bool in
-                return dataArray.filter({ (string) -> Bool in
-                    return string.contains(text)
+                return dataArray.filter({ (string: String) -> Bool in
+                    return (string.range(of: text, options: .caseInsensitive) != nil)
                 }).count > 0
             }
             tableView.reloadData()
@@ -89,6 +101,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             print("no type selected")
         }
     }
+    
+    
+    // MARK:- TableView delegates
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dataForPlay.count
     }
